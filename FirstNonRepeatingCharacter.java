@@ -1,6 +1,8 @@
+package ChallengingProblems;
+
 public class FirstNonRepeatingCharacter {
     public static void main(String[] args) {
-        System.out.println(firstNonRepeatingLetter("Sourabh"));
+        System.out.println(firstNonRepeatingLetter("SSoooossuurabh"));
     }
 
     /**
@@ -23,6 +25,12 @@ public class FirstNonRepeatingCharacter {
             c = tempStr.charAt(i);
             index = ((int) c);
             
+            // improved performance specific to this particular question
+            // skipped unnecessary assignment to characterarray and integerarray
+            if(repetitions[index] == 2){
+                i++;
+                continue;
+            }
             charArr[index] = c;
             repetitions[index]++;
             i++;
