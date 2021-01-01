@@ -6,63 +6,104 @@ import java.util.StringTokenizer;
 public class WaveProblem {
     static String delimiter = "|";
 
+    /**
+     * 
+     * @param args
+     */
     public static void main(String[] args) {
-        int[] wave = { 0, 1, 0, -10, -20, -2, 0, -1, 0, 2, 5, 0 };
-        showExtremeWaves(wave);
+        int[] wave = { 0, 1, 0, -10, -20, -2, 0, -1, 0, 5, 2, 0 };
+        String[] crestAndTroughOfWave = getCrestAndTroughOfWave(wave);
+        out.println(Arrays.toString(crestAndTroughOfWave));
+
+        StringTokenizer minTokenizer = new StringTokenizer(crestAndTroughOfWave[0], ",[]");
+        
+
     }
 
-    // Entry method
-    private static void showExtremeWaves(int[] arr) {
-        printMaxWave(arr);
-        printMinWave(arr);
+    private static void printBottomAndTopOfAWave(int[] arr) {
+        int[] minMaxOfAWaveString = getMinMaxOfAWaveString(arr);
+        out.println("Bottom Is " + minMaxOfAWaveString[0]);
+        out.println("Bottom Is " + minMaxOfAWaveString[1]);
     }
 
-    // Method to find top of a wave
-    private static void printMaxWave(int[] arr) {
+    private static int[] getMinMaxOfAWaveString(int[] arr) {
+        int[] minMaxArr = new int[2];
         // temp array to store wave digits
-        String[] topStrings = getWaveString(arr, 0, arr.length - 1);
+        String[] waveStrings = getWaveStrings(arr, 0, arr.length - 1);
 
         int maxTop = 0;
-        for (String s : topStrings)
-            if (!"".equals(s)) {
-                int i = getTopOfAWave(s);
-                if (maxTop < i)
-                    maxTop = i;
-            }
-
-        out.println("TOP MAX IS -> " + maxTop);
-    }
-
-    // Method to find bottom of a wave
-    private static void printMinWave(int[] arr) {
-        // temp array to store wave digits
-        String[] bottomStrings = getWaveString(arr, 0, arr.length - 1);
-
         int minBottom = 0;
-        for (String s : bottomStrings)
-            if (!"".equals(s)) {
-                int i = getBottomOfAWave(s);
-                if (minBottom > i)
-                    minBottom = i;
+        int top = 0;
+        int bottom = 0;
+        for (String waveString : waveStrings)
+            if (!waveString.isEmpty()) {
+                top = getTopOfAWave(waveString);
+                bottom = getBottomOfAWave(waveString);
+                if (maxTop < top)
+                    maxTop = top;
+                if (minBottom > bottom)
+                    minBottom = bottom;
+
             }
 
-        out.println("BOTTOM MIN IS -> " + minBottom);
+        minMaxArr[0] = minBottom;
+        minMaxArr[1] = maxTop;
+
+        return minMaxArr;
     }
 
-    private static String[] getWaveString(int[] arr, int l, int r) {
-        String[] strArr = new String[r - l];
-        initializeArray(strArr);
-        int indx = 0;
+    private static String[] getCrestAndTroughOfWave(int[] arr) {
+        String[] crestAndTrough = new String[2];
+
+        int l = 0;
+        int r = 0;
+        int max = 0;
+        int min = 0;
+
+        boolean isCrest = false;
+
+        for (int i = 0; i < arr.length - 1; i++) {
+            isCrest = false;
+            l = i;
+            while (arr[i + 1] != 0)
+                i++;
+            r = i + 1;
+
+            if (arr[l] < arr[l + 1])
+                isCrest = true;
+
+            if (isCrest) {
+                int topOfAWave = getTopOfAWave(getWaveStrings(arr, l, r)[0]);
+                if (max < topOfAWave)
+                    max = topOfAWave;
+                crestAndTrough[0] = max + "[" + l + "," + r + "]";
+            } else {
+                int bottomOfAWave = getBottomOfAWave(getWaveStrings(arr, l, r)[0]);
+                if (min > bottomOfAWave)
+                    min = bottomOfAWave;
+                crestAndTrough[1] = min + "[" + l + "," + r + "]";
+            }
+
+        }
+
+        return crestAndTrough;
+
+    }
+
+    private static String[] getWaveStrings(int[] arr, int l, int r) {
+        String[] waveStrings = new String[r - l];
+        initializeArray(waveStrings);
+        int waveStrIndex = 0;
 
         for (int i = l; i < r; i++) {
             if (i + 1 < r && arr[i + 1] != 0) {
-                strArr[indx] = strArr[indx] + delimiter + arr[i];
+                waveStrings[waveStrIndex] = waveStrings[waveStrIndex] + delimiter + arr[i];
             } else {
-                strArr[indx] += delimiter + arr[i];
-                indx++;
+                waveStrings[waveStrIndex] += delimiter + arr[i];
+                waveStrIndex++;
             }
         }
-        return strArr;
+        return waveStrings;
     }
 
     private static int getTopOfAWave(String s) {
